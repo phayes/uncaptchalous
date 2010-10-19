@@ -1,0 +1,5 @@
+; $Id $
+name = "Uncaptchalous"
+description = "Unobtrusive form spam control"
+package = LevelTen
+core = 6.x
