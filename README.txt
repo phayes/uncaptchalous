@@ -12,6 +12,8 @@ OPTIONS
 
 CHANGELOG
 -----------
+6.x-1.0-beta3
+ Implemented form visibility settings
 
 6.x-1.0-beta2
  Changed package in .info from Levelten to Spam
