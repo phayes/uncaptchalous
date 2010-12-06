@@ -1,3 +1,5 @@
-div#uchp {
+/* $Id$ */
+
+div.uchp {
 	display: none !important;
 }

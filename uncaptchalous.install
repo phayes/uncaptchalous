@@ -1,4 +1,13 @@
 <?php
+// $Id$
+
+/**
+ * @file
+ *
+ * Contains install and uninstall functions
+ *
+ * @author Dustin Currie <dustinc@getlevelten.com>
+ */
 
 /**
  * Implementation of hook_uninstall().

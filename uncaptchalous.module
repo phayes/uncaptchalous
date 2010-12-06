@@ -1,4 +1,5 @@
 <?php 
+// $Id$
 /**
  * @file
  * This module provides an unobtrusive form anti-spam method as an alternative to an HCI challege-response test such as a CAPTCHA
@@ -21,7 +22,6 @@ function uncaptchalous_menu() {
     'access arguments' => array('administer un.captcha.lous settings'),
     'file' => 'uncaptchalous.admin.inc',
   );
- 
   return $items;
 }
 
@@ -49,8 +49,8 @@ function uncaptchalous_help($section) {
  */
 
 function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
-  $uc_validate = true;
-  switch(variable_get('uncaptchalous_visibility', NULL)) {
+  $uc_validate = TRUE;
+  switch (variable_get('uncaptchalous_visibility', NULL)) {
     case "0":
       $ids = preg_split('/\n/', trim(variable_get('uncaptchalous_form_ids', '')));
       $uc_validate = (drupal_match_path($form_id, variable_get('uncaptchalous_form_ids', ''))) ? FALSE : TRUE;
@@ -60,14 +60,14 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
       $uc_validate = (drupal_match_path($form_id, variable_get('uncaptchalous_form_ids', ''))) ? TRUE : FALSE;
       break;
     case "2":
-       $uc_validate = drupal_eval(variable_get('uncaptchalous_form_ids', ''));
+      $uc_validate = drupal_eval(variable_get('uncaptchalous_form_ids', ''));
       break;
   }
   if ($uc_validate) {
     if (variable_get('uncaptchalous_javascript', 0)) {
       drupal_add_js(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.js');
-      $form['uncaptchalous_js_param1'] = array('#type' => 'hidden', '#value' => rand(1,1000000));
-      $form['uncaptchalous_js_param2'] = array('#type' => 'hidden', '#value' => rand(1,1000000));
+      $form['uncaptchalous_js_param1'] = array('#type' => 'hidden', '#value' => rand(1, 1000000));
+      $form['uncaptchalous_js_param2'] = array('#type' => 'hidden', '#value' => rand(1, 1000000));
       $form['uncaptchalous_js_val'] = array('#type' => 'hidden', '#value' => 0);
     }
     if (variable_get('uncaptchalous_honeypot_field', 0)) {
@@ -78,12 +78,12 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
         '#default_value' => '',
         '#size' => 60,
         '#maxlength' => 128,
-        '#prefix' => '<div id="uchp">',
+        '#prefix' => '<div class="uchp">',
         '#suffix' => '</div>',
       );
       drupal_add_css(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.css');
+      $form['uncaptchalous']['#element_validate'] =  array('uncaptchalous_validate');
     }
-    $form['uncaptchalous']['#element_validate'] =  array('uncaptchalous_validate');
   }
 }
 
@@ -94,12 +94,12 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
 function uncaptchalous_validate($form, &$form_state) {
   if (variable_get('uncaptchalous_javascript', 0)) {
     if ($form['#post']['uncaptchalous_js_val'] != $form['#post']['uncaptchalous_js_param1'] + $form['#post']['uncaptchalous_js_param2']) {
-      form_set_error('uncaptchalous_js_val',t('Javascript must be enabled to submit this form'));
+      form_set_error('uncaptchalous_js_val', t('Javascript must be enabled to submit this form'));
     }       
   }
   if (variable_get('uncaptchalous_honeypot_field', 0)) {
     if ($form['#post']['uncaptchalous_hp']) {
-      form_set_error('uncaptchalous_hp',t('You have been detected as a bot.'));
+      form_set_error('uncaptchalous_hp', t('You have been detected as a bot.'));
     }    
   }   
 }
