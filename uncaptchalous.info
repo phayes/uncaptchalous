@@ -1,4 +1,3 @@
-; $Id$
 name = "Uncaptchalous"
 description = "Unobtrusive form spam control"
 package = Spam

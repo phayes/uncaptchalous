@@ -1,4 +1,3 @@
-// $Id$
 /**
  * @author Dustin Currie
  */

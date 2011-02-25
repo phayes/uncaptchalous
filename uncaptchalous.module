@@ -1,5 +1,4 @@
 <?php 
-// $Id$
 /**
  * @file
  * This module provides an unobtrusive form anti-spam method as an alternative to an HCI challege-response test such as a CAPTCHA
