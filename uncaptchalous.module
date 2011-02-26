@@ -65,23 +65,41 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
   
   if ($uc_validate) {
     if (variable_get('uncaptchalous_javascript', 0)) {
-      drupal_add_js(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.js');
-      $form['uncaptchalous_js_param1'] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
-      $form['uncaptchalous_js_param2'] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
-      $form['uncaptchalous_js_val'] = array('#type' => 'textfield', '#default_value' => 0);
+      
+      $js_string = "
+        jQuery(document).ready(function(){
+          jQuery('[name=".variable_get('uncaptchalous_js_val_field_id')."]').val(parseInt(jQuery('[name=".variable_get('uncaptchalous_js_param1_field_id')."]').val()) + parseInt(jQuery('[name=".variable_get('uncaptchalous_js_param2_field_id')."]').val()));
+        });
+      ";
+      
+      // Make it harder to read and add it
+      $js_string = str_replace(array(" ","\n","\r"),"",$js_string);
+      drupal_add_js($js_string,array('type' => 'inline'));
+      
+      $form[variable_get('uncaptchalous_js_param1_field_id')] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
+      $form[variable_get('uncaptchalous_js_param2_field_id')] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
+      $form[variable_get('uncaptchalous_js_val_field_id')] = array('#type' => 'textfield', '#default_value' => 0);
     }
-    if (variable_get('uncaptchalous_honeypot_field', 0)) {
-      $form['uncaptchalous_hp'] = array(
-        '#attributes' => array('class' => array('uncaphp')),
+    if (variable_get('uncaptchalous_honeypot_field', 0)) { 
+      $form[variable_get('uncaptchalous_honeypot_field_id')] = array(
         '#type' => 'textfield',
         '#title' => t(variable_get('uncaptchalous_honeypot_field_title', 'url')),
         '#default_value' => '',
         '#size' => 60,
         '#maxlength' => 128,
-        '#prefix' => '<div class="uchp">',
-        '#suffix' => '</div>',
       );
-      drupal_add_css(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.css',array('type' => 'file'));
+      
+      // Add CSS to hide the fields using their randomly generated IDs
+      drupal_add_css(
+        'sddiv.form-item-'.variable_get('uncaptchalous_js_param1_field_id').','.
+        'sddiv.form-item-'.variable_get('uncaptchalous_js_param2_field_id').','.
+        'sddiv.form-item-'.variable_get('uncaptchalous_js_val_field_id').','.
+        'sddiv.form-item-'.variable_get('uncaptchalous_honeypot_field_id').'{'.
+        'display: none !important;'.
+        '}',
+        array('type' => 'inline')
+      );
+      
       $form['uncaptchalous']['#element_validate'] =  array('uncaptchalous_validate');
     }
   }
@@ -90,19 +108,16 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
 /**
  * Implementation of hook_validate().
  */
-
 function uncaptchalous_validate($form, &$form_state) {
-  
-  dpm($form_state);
-  
   if (variable_get('uncaptchalous_javascript', 0)) {
-    if ($form_state['values']['uncaptchalous_js_val'] != $form_state['values']['uncaptchalous_js_param1'] + $form_state['values']['uncaptchalous_js_param2']) {
+    if ($form_state['values'][variable_get('uncaptchalous_js_val_field_id')] != $form_state['values'][variable_get('uncaptchalous_js_param1_field_id')] + $form_state['values'][variable_get('uncaptchalous_js_param2_field_id')]) {
       form_set_error('uncaptchalous_js_val', t('Javascript must be enabled to submit this form'));
     }
   }
   if (variable_get('uncaptchalous_honeypot_field', 0)) {
-    if ($form_state['values']['uncaptchalous_hp']) {
-      form_set_error('uncaptchalous_hp', t('You have been detected as a bot.'));
+    if ($form_state['values'][variable_get('uncaptchalous_honeypot_field_id')]) {
+      form_set_error(variable_get('uncaptchalous_honeypot_field_id'), t('You have been detected as a bot.'));
     }
   }
 }
+
