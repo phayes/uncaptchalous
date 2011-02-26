@@ -2,6 +2,9 @@
  * @author Dustin Currie
  */
 
-Drupal.behaviors.uncaptchalous = function () {
-  $('#edit-uncaptchalous-js-val').attr('value', parseInt($('#edit-uncaptchalous-js-param1').val()) + parseInt($('#edit-uncaptchalous-js-param2').val()));
+Drupal.behaviors.uncaptchalous = {
+  'attach': function(context, settings) {
+    var solution = parseInt(jQuery('[name=uncaptchalous_js_param1]').val()) + parseInt(jQuery('[name=uncaptchalous_js_param2]').val());
+    jQuery('[name=uncaptchalous_js_val]').val(solution);
+  }
 };

@@ -62,16 +62,19 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
       $uc_validate = drupal_eval(variable_get('uncaptchalous_form_ids', ''));
       break;
   }
+  
+  dpm($uc_validate);
+  
   if ($uc_validate) {
     if (variable_get('uncaptchalous_javascript', 0)) {
       drupal_add_js(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.js');
-      $form['uncaptchalous_js_param1'] = array('#type' => 'hidden', '#value' => rand(1, 1000000));
-      $form['uncaptchalous_js_param2'] = array('#type' => 'hidden', '#value' => rand(1, 1000000));
-      $form['uncaptchalous_js_val'] = array('#type' => 'hidden', '#value' => 0);
+      $form['uncaptchalous_js_param1'] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
+      $form['uncaptchalous_js_param2'] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
+      $form['uncaptchalous_js_val'] = array('#type' => 'textfield', '#default_value' => 0);
     }
     if (variable_get('uncaptchalous_honeypot_field', 0)) {
       $form['uncaptchalous_hp'] = array(
-        '#attributes' => array('class' => 'uncaphp'),
+        '#attributes' => array('class' => array('uncaphp')),
         '#type' => 'textfield',
         '#title' => t(variable_get('uncaptchalous_honeypot_field_title', 'url')),
         '#default_value' => '',
@@ -80,7 +83,7 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
         '#prefix' => '<div class="uchp">',
         '#suffix' => '</div>',
       );
-      drupal_add_css(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.css');
+      drupal_add_css(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.css',array('type' => 'file'));
       $form['uncaptchalous']['#element_validate'] =  array('uncaptchalous_validate');
     }
   }
@@ -91,14 +94,17 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
  */
 
 function uncaptchalous_validate($form, &$form_state) {
+  
+  dpm($form_state);
+  
   if (variable_get('uncaptchalous_javascript', 0)) {
-    if ($form['#post']['uncaptchalous_js_val'] != $form['#post']['uncaptchalous_js_param1'] + $form['#post']['uncaptchalous_js_param2']) {
+    if ($form_state['values']['uncaptchalous_js_val'] != $form_state['values']['uncaptchalous_js_param1'] + $form_state['values']['uncaptchalous_js_param2']) {
       form_set_error('uncaptchalous_js_val', t('Javascript must be enabled to submit this form'));
-    }       
+    }
   }
   if (variable_get('uncaptchalous_honeypot_field', 0)) {
-    if ($form['#post']['uncaptchalous_hp']) {
+    if ($form_state['values']['uncaptchalous_hp']) {
       form_set_error('uncaptchalous_hp', t('You have been detected as a bot.'));
-    }    
-  }   
+    }
+  }
 }

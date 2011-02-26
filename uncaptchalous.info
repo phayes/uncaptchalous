@@ -1,4 +1,4 @@
-name = "Uncaptchalous"
+name = "Un.captcha.lous"
 description = "Unobtrusive form spam control"
 package = Spam
-core = 6.x
+core = 7.x
