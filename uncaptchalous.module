@@ -63,8 +63,6 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
       break;
   }
   
-  dpm($uc_validate);
-  
   if ($uc_validate) {
     if (variable_get('uncaptchalous_javascript', 0)) {
       drupal_add_js(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.js');
