@@ -66,15 +66,15 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
   if ($uc_validate) {
     if (variable_get('uncaptchalous_javascript', 0)) {
       
-      $js_string = "
-        jQuery(document).ready(function(){
-          jQuery('[name=".variable_get('uncaptchalous_js_val_field_id')."]').val(parseInt(jQuery('[name=".variable_get('uncaptchalous_js_param1_field_id')."]').val()) + parseInt(jQuery('[name=".variable_get('uncaptchalous_js_param2_field_id')."]').val()));
-        });
-      ";
-      
-      // Make it harder to read and add it
-      $js_string = str_replace(array(" ","\n","\r"),"",$js_string);
-      drupal_add_js($js_string,array('type' => 'inline'));
+      drupal_add_js(drupal_get_path('module', 'uncaptchalous') . '/uncaptchalous.js',array('type' => 'file'));
+      $settings = array(
+        'uncaptchalous' => array (
+          variable_get('uncaptchalous_js_val_field_id'),
+          variable_get('uncaptchalous_js_param1_field_id'),
+          variable_get('uncaptchalous_js_param2_field_id'),
+        ),
+      );
+      drupal_add_js($settings, array('type' => 'setting'));
       
       $form[variable_get('uncaptchalous_js_param1_field_id')] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
       $form[variable_get('uncaptchalous_js_param2_field_id')] = array('#type' => 'textfield', '#default_value' => rand(1, 1000000));
@@ -91,10 +91,10 @@ function uncaptchalous_form_alter(&$form, $form_state, $form_id) {
       
       // Add CSS to hide the fields using their randomly generated IDs
       drupal_add_css(
-        'sddiv.form-item-'.variable_get('uncaptchalous_js_param1_field_id').','.
-        'sddiv.form-item-'.variable_get('uncaptchalous_js_param2_field_id').','.
-        'sddiv.form-item-'.variable_get('uncaptchalous_js_val_field_id').','.
-        'sddiv.form-item-'.variable_get('uncaptchalous_honeypot_field_id').'{'.
+        'div.form-item-'.variable_get('uncaptchalous_js_param1_field_id').','.
+        'div.form-item-'.variable_get('uncaptchalous_js_param2_field_id').','.
+        'div.form-item-'.variable_get('uncaptchalous_js_val_field_id').','.
+        'div.form-item-'.variable_get('uncaptchalous_honeypot_field_id').'{'.
         'display: none !important;'.
         '}',
         array('type' => 'inline')

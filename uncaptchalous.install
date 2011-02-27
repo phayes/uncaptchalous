@@ -19,3 +19,21 @@ function uncaptchalous_uninstall() {
   variable_del('uncaptchalous_visibility');
   variable_del('uncaptchalous_form_ids');
 }
+
+function uncaptchalous_install() {
+  // Generate random field-id's for this drupal installation
+  variable_set('uncaptchalous_honeypot_field_id',uncaptchalous_gen_random_string());
+  variable_set('uncaptchalous_js_param1_field_id',uncaptchalous_gen_random_string());
+  variable_set('uncaptchalous_js_param2_field_id',uncaptchalous_gen_random_string());
+  variable_set('uncaptchalous_js_val_field_id',uncaptchalous_gen_random_string());
+}
+
+function uncaptchalous_gen_random_string() {
+  $length = mt_rand(10,20);
+  $characters = str_split('0123456789abcdefghijklmnopqrstuvwxyz');
+  $string ='';    
+  for ($p = 0; $p < $length; $p++) {
+    $string .= $characters[mt_rand(0, (count($characters)-1))];
+  }
+  return $string;
+}
