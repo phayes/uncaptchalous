@@ -1,6 +1,6 @@
 DESCRIPTION
 -----------
-Unobtrusive form spam filter.  Unlike a captcha it requires no human/computer interaction. Unlike akismet, it does not rely on a third party service.
+Unobtrusive form spam filter.  Unlike a captcha it requires no human/computer interaction. Unlike akismet, it does not rely on a third party service. Theoretically, a bot could be purpose built to defeat it - but it should provide protection against general purpose spam-bots.
 
 USAGE
 -----------
